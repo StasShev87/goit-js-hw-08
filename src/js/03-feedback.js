@@ -3,9 +3,9 @@ import throttle from 'lodash.throttle';
 const localStorageKey = 'feedback-form-state';
 
 const form = document.querySelector('.feedback-form');
-const formEmail = document.querySelector('.feedback-form > input[name=email]');
+const formEmail = document.querySelector('.feedback-form input[name=email]');
 const formMessage = document.querySelector(
-  '.feedback-form > input[name=message]'
+  '.feedback-form input[name=message]'
 );
 
 // Restore form fields from local storage
@@ -40,3 +40,19 @@ form.addEventListener('submit', event => {
     console.error('Remove state error: ', error.message);
   }
 });
+
+form.addEventListener(
+  'input',
+  throttle(event => {
+    const { email, message } = event.currentTarget.elements;
+    const formData = { email: email.value, message: message.value };
+    console.log(formData);
+    // Backup form data
+    try {
+      const formDataJSON = JSON.stringify(formData);
+      localStorage.setItem(localStorageKey, formDataJSON);
+    } catch (error) {
+      console.error('Set state error: ', error.message);
+    }
+  }, 500)
+);
